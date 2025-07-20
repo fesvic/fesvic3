@@ -1,0 +1,16 @@
+[*.cs]
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = none
+
+# IDE0058: Expression value is never used
+csharp_style_unused_value_expression_statement_preference = unused_local_variable
+
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = none
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+# CA1304: Specify CultureInfo
+dotnet_diagnostic.CA1304.severity = none
