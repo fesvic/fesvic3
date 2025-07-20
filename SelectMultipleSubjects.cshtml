@@ -1,0 +1,31 @@
+
+@model List<Subject>
+
+<h2 class="text-2xl font-bold mb-6 text-center">Select Subjects to Attempt</h2>
+
+<form asp-action="StartMultipleSubjects" method="post">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var subject = Model[i];
+            <label class="cursor-pointer">
+                <input type="checkbox" name="selectedSubjects" value="@subject.Id" class="hidden peer" />
+                <div class="peer-checked:border-blue-500 peer-checked:shadow-md border-2 border-gray-200 rounded-2xl p-4 transition">
+                    <div class="flex items-center space-x-4">
+                        <img src="@subject.IconUrl" class="w-12 h-12" />
+                        <div>
+                            <h3 class="text-xl font-semibold">@subject.Name</h3>
+                            <p class="text-sm text-gray-500">@subject.QuestionCount questions • @subject.Duration mins</p>
+                        </div>
+                    </div>
+                </div>
+            </label>
+        }
+    </div>
+
+    <div class="text-center mt-6">
+        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition">
+            Start Selected Subjects
+        </button>
+    </div>
+</form>

@@ -1,0 +1,26 @@
+@model List<Student>
+@{
+    ViewData["Title"] = "Registered Students";
+}
+
+<h2>Registered Students</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Exam Number</th>
+            <th>Has Submitted?</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Name</td>
+                <td>@student.ExamNumber</td>
+                <td>@(student.HasSubmitted ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>

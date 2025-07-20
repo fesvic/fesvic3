@@ -1,0 +1,74 @@
+@model List<FESVIC.Models.Answer>
+
+@{
+    ViewData["Title"] = "Quiz Result Details";
+}
+
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">📋 Quiz Result Details</h4>
+            <button class="btn btn-light btn-sm" onclick="window.print()">
+                <i class="bi bi-printer"></i> Print
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Correct Option</th>
+                            <th>Your Answer</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var ans = Model[i];
+                            var correct = ans.Question?.CorrectOption;
+                            var selected = ans.SelectedOption;
+                            var isCorrect = ans.IsCorrect;
+
+                            <tr class="@(isCorrect ? "table-success" : "table-danger")">
+                                <td>@(i + 1)</td>
+                                <td class="text-start">@Html.Raw(ans.Question?.Text)</td>
+                                <td><strong>@correct</strong></td>
+                                <td>
+                                    <strong>
+                                        @(string.IsNullOrWhiteSpace(selected) ? "Not Answered" : selected)
+                                    </strong>
+                                </td>
+                                <td>
+                                    @if (isCorrect)
+                                    {
+                                        <span class="badge bg-success">Correct</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Wrong</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="RecalculateAllScores" method="post">
+    <button type="submit" class="btn btn-sm btn-primary mb-3">
+        🔁 Recalculate All Scores
+    </button>
+</form>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}

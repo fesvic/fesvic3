@@ -1,0 +1,53 @@
+@model dynamic
+@{
+    Layout = null; // No layout for clean printing
+    var grouped = Model;
+    string className = ViewBag.ClassName;
+}
+
+<html>
+<head>
+    <title>Class Result - @className</title>
+    <style>
+        body { font-family: Arial; font-size: 12pt; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #000; padding: 4px; text-align: left; }
+        h2 { text-align: center; }
+    </style>
+</head>
+<body onload="window.print()">
+    <h2>Quiz Result Sheet - Class: @className</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Exam No</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Score</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+            int count = 1;
+            foreach (var studentGroup in grouped)
+            {
+                foreach (var result in studentGroup.Results)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@studentGroup.Student.ExamNumber</td>
+                        <td>@studentGroup.Student.FullName</td>
+                        <td>@result.Subject.Name</td>
+                        <td>@result.Score</td>
+                        <td>@result.DateTaken.ToShortDateString()</td>
+                    </tr>
+                    count++;
+                }
+            }
+        }
+        </tbody>
+    </table>
+</body>
+</html>

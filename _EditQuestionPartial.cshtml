@@ -1,0 +1,47 @@
+@model FESVIC.Models.Question
+
+<form asp-action="EditQuestion" method="post" id="edit-question-form">
+    <input type="hidden" asp-for="Id" />
+<div class="form-group mb-3">
+    <label for="Mark">Mark</label>
+    <input asp-for="Mark" class="form-control" type="number" min="0" required />
+    <span asp-validation-for="Mark" class="text-danger"></span>
+</div>
+
+    <div class="mb-3">
+        <label class="form-label">Question</label>
+        <textarea asp-for="Text" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="row g-2">
+        <div class="col-md-6">
+            <label>Option A</label>
+            <input asp-for="OptionA" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Option B</label>
+            <input asp-for="OptionB" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Option C</label>
+            <input asp-for="OptionC" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Option D</label>
+            <input asp-for="OptionD" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>Correct Option</label>
+            <select asp-for="CorrectOption" class="form-select">
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label>Mark</label>
+            <input asp-for="Mark" class="form-control" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+</form>

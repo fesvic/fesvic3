@@ -1,0 +1,92 @@
+@model FESVIC.ViewModels.QuizHistoryViewModel
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary fw-bold">Quiz History</h2>
+
+    <form method="get" class="mb-3 d-flex align-items-center gap-2" asp-action="History" asp-controller="Student">
+        <input type="text" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Search by Subject" />
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <a href="@Url.Action("History")" class="btn btn-outline-secondary">Clear</a>
+    </form>
+
+    @if (!Model.Results.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            No quiz results found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Date Taken</th>
+                        <th scope="col">Score (%)</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.Results)
+                    {
+                        <tr>
+                            <td>@result.Subject?.Name</td>
+                            <td>@result.TakenAt.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>@result.Score</td>
+                            <td class="text-center">
+                                <a asp-controller="Admin" asp-action="Result" asp-route-id="@result.Id" class="btn btn-sm btn-outline-primary me-2" title="View detailed feedback">
+                                    <i class="bi bi-eye-fill"></i> View by Result
+                                <i class="bi bi-eye -fill"></i>result of student</a>
+
+                                <form asp-action="DeleteQuizResult" asp-route-id="@result.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this result?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete this result">
+                                        <i class="bi bi-trash-fill"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("History", new { page = Model.CurrentPage - 1, search = Model.SearchTerm })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("History", new { page = i, search = Model.SearchTerm })">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("History", new { page = Model.CurrentPage + 1, search = Model.SearchTerm })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+    @if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+</div>

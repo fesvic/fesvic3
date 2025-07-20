@@ -1,0 +1,70 @@
+@model List<FESVIC.Models.Question>
+@using FESVIC.Models
+
+<form asp-action="ConfirmImport" method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Options (A–D)</th>
+                <th>Correct Option / Mark / Subject</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <textarea class="form-control" name="[@i].Text">@Model[i].Text</textarea>
+                    </td>
+                    <td>
+                        <div>A: <input class="form-control" name="[@i].OptionA" value="@Model[i].OptionA" /></div>
+                        <div>B: <input class="form-control" name="[@i].OptionB" value="@Model[i].OptionB" /></div>
+                        <div>C: <input class="form-control" name="[@i].OptionC" value="@Model[i].OptionC" /></div>
+                        <div>D: <input class="form-control" name="[@i].OptionD" value="@Model[i].OptionD" /></div>
+                    </td>
+                    <td>
+                        <div>
+                            Correct Option:
+                            <select class="form-select" name="[@i].CorrectOption">
+                                @foreach (var opt in new[] { "A", "B", "C", "D" })
+                                {
+                                    if (Model[i].CorrectOption == opt)
+                                    {
+                                        <option value="@opt" selected="selected">@opt</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@opt">@opt</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div>
+                            Mark:
+                            <input class="form-control" type="number" name="[@i].Mark" value="@Model[i].Mark" />
+                        </div>
+                        <div>
+                            Subject:
+                            <select class="form-select" name="[@i].SubjectId">
+                                @foreach (var subject in (List<Subject>)ViewBag.Subjects)
+                                {
+                                    if (Model[i].SubjectId == subject.Id)
+                                    {
+                                        <option value="@subject.Id" selected="selected">@subject.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@subject.Id">@subject.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">✅ Confirm and Save</button>
+</form>

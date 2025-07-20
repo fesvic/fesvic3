@@ -1,0 +1,148 @@
+@model List<Question>
+@{
+    ViewData["Title"] = "Quiz";
+    var question = Model.FirstOrDefault();
+    int nextPage = (ViewBag.Page != null) ? (int)ViewBag.Page + 1 : 1;
+    int subjectId = (ViewBag.SubjectId != null) ? (int)ViewBag.SubjectId : 0;
+    int totalQuestions = ViewBag.TotalQuestions ?? 10;
+    int currentPage = ViewBag.Page ?? 1;
+}
+
+<style>
+    body {
+        background: linear-gradient(to right, #800020, #ffffff);
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .quiz-container {
+        max-width: 700px;
+        margin: 60px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .question-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #800020;
+    }
+
+    .option {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .option:hover {
+        background-color: #800020;
+        color: white;
+    }
+
+    .btn-next {
+        background-color: #800020;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .btn-next:hover {
+        background-color: #a8324a;
+    }
+
+    #timer {
+        margin-top: 20px;
+        color: #800020;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background-color: #eee;
+        border-radius: 4px;
+        margin-top: 30px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        background-color: #d8cccf;
+        width: @(currentPage * 100 / totalQuestions)%;
+        transition: width 0.3s ease-in-out;
+   
+   @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+@if (question == null)
+{
+    <div class="quiz-container text-center">
+        <h2 style="color: #1a0ec7;">No questions available.</h2>
+    </div>
+}
+else
+{
+    <div class="quiz-container">
+        <div class="question-text">
+            Question @currentPage of @totalQuestions
+        </div>
+
+        <form asp-action="SubmitAnswer" method="post">
+            <input type="hidden" name="QuestionId" value="@question.Id" />
+            <input type="hidden" name="Page" value="@currentPage" />
+            <input type="hidden" name="SubjectId" value="@subjectId" />
+
+            @foreach (var option in new[] { question.OptionA, question.OptionB, question.OptionC, question.OptionD })
+            {
+                <label class="option">
+                    <input type="radio" name="SelectedAnswer" value="@option" required style="margin-right: 8px;" />
+                    @option
+                </label>
+            }
+
+            <button type="submit" class="btn-next">Next</button>
+
+            <div id="timer">⏰ Time left: <span id="timeLeft">@ViewBag.TimeLimit:00</span> mins</div>
+        </form>
+
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = @ViewBag.TimeLimit * 60;
+        let timer = setInterval(() => {
+            timeLeft--;
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById("timeLeft").innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                document.forms[0].submit();
+            }
+        }, 1000);
+    </script>
+}

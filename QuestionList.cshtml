@@ -1,0 +1,103 @@
+@model List<FESVIC.Models.Question>
+
+@{
+    ViewData["Title"] = "Question List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<div class="container my-5">
+    <h2 class="text-center text-primary fw-bold mb-4">🧠 Question List</h2>
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered align-middle table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Subject</th>
+                    <th>Question</th>
+                    <th>Options</th>
+                    <th>Correct</th>
+                    <th>Mark</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    int sn = 1;
+                    foreach (var q in Model)
+                    {
+                        <tr>
+                            <td>@sn++</td>
+                            <td>@q.Subject?.Name</td>
+                            <td>@q.Text</td>
+                            <td>
+                                <div><strong>A:</strong> @q.OptionA</div>
+                                <div><strong>B:</strong> @q.OptionB</div>
+                                <div><strong>C:</strong> @q.OptionC</div>
+                                <div><strong>D:</strong> @q.OptionD</div>
+                            </td>
+                            <td><strong>@q.CorrectOption</strong></td>
+                            <td>@q.Mark</td>
+                            <td>@q.Subject?.Duration mins</td>
+
+                            <td>
+                                <button class="btn btn-sm btn-warning mb-1" onclick="loadEditModal(@q.Id)">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteQuestion(@q.Id)">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7" class="text-center text-muted">No questions found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for Editing -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="editModalContent"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function loadEditModal(id) {
+            $.get('/Admin/EditQuestion/' + id, function (data) {
+                $('#editModalContent').html(data);
+                $('#editModal').modal('show');
+            });
+        }
+
+        $(document).on("submit", "#edit-question-form", function (e) {
+            e.preventDefault();
+            $.post('/Admin/EditQuestion', $(this).serialize(), function (response) {
+                if (response.success) {
+                    alert("Question updated successfully!");
+                    location.reload();
+                } else {
+                    $('#editModalContent').html(response); // Show validation errors
+                }
+            });
+        });
+
+        function deleteQuestion(id) {
+            if (confirm("Are you sure you want to delete this question?")) {
+                $.post('/Admin/DeleteQuestion/' + id, function () {
+                    location.reload();
+                });
+            }
+        }
+    </script>
+}

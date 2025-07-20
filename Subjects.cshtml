@@ -1,0 +1,26 @@
+@model List<Subject>
+@{
+    ViewData["Title"] = "Manage Subjects";
+}
+
+<h2>Subjects</h2>
+
+<form asp-action="AddSubject" method="post" class="mb-3">
+    <input type="text" name="name" placeholder="Subject Name" required class="form-control d-inline w-50" />
+    <input type="number" name="timeLimit" placeholder="Time (min)" required class="form-control d-inline w-25" />
+    <button class="btn btn-success">Add Subject</button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Subject Name</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var subject in Model)
+    {
+        <tr><td>@subject.Name</td></tr>
+    }
+    </tbody>
+</table>

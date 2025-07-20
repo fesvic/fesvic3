@@ -1,0 +1,125 @@
+@model List<FESVIC.Models.Student>
+
+@{
+    ViewData["Title"] = "Registered Students";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="container mt-5">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fas fa-users me-2"></i>Registered Students</h4>
+            <a href="/Admin/RegisterStudent" class="btn btn-light btn-sm shadow-sm" title="Add New Student">
+                <i class="fas fa-plus me-1"></i> Add Student
+            </a>
+        </div>
+
+        <div class="card-body p-4">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col"><i class="fas fa-user me-1"></i> Name</th>
+                                <th scope="col"><i class="fas fa-school me-1"></i> Class</th>
+                                <th scope="col"><i class="fas fa-id-badge me-1"></i> Exam Number</th>
+                                <th scope="col"><i class="fas fa-cogs me-1"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@student.Name</td>
+                                    <td>@student.Class</td>
+                                    <td class="text-monospace">@student.ExamNumber</td>
+                                    <td>
+                                        <a asp-action="PrintStudentSlip" asp-controller="Admin" asp-route-id="@student.Id"
+                                           class="btn btn-outline-info btn-sm me-2" title="Print Slip">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+
+                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Student"
+                                                data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                                data-student-id="@student.Id" data-student-name="@student.Name">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center" role="alert">
+                    No students have been registered yet.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmDeleteModalLabel"><i class="fas fa-exclamation-triangle me-2"></i> Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <strong id="studentNameToDelete"></strong>?
+                This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <form method="post" id="deleteStudentForm" asp-controller="Admin" asp-action="DeleteStudent">
+                    <input type="hidden" name="id" id="studentIdToDelete" value="" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Fill modal with correct student info when delete button clicked
+    var confirmDeleteModal = document.getElementById('confirmDeleteModal')
+    confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var studentId = button.getAttribute('data-student-id');
+        var studentName = button.getAttribute('data-student-name');
+
+        var modalTitle = confirmDeleteModal.querySelector('.modal-title');
+        var studentNameElement = confirmDeleteModal.querySelector('#studentNameToDelete');
+        var studentIdInput = confirmDeleteModal.querySelector('#studentIdToDelete');
+
+        studentNameElement.textContent = studentName;
+        studentIdInput.value = studentId;
+    });
+</script>
+
+<style>
+    /* Subtle hover highlight for rows */
+    tbody tr:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    /* Fixed width for actions column */
+    th:nth-child(4), td:nth-child(4) {
+        width: 140px;
+    }
+
+    /* Improve monospace exam number readability */
+    .text-monospace {
+        font-family: monospace, monospace;
+        letter-spacing: 0.1em;
+    }
+</style>

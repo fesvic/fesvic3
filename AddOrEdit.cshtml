@@ -1,0 +1,268 @@
+@model FESVIC.ViewModels.QuestionViewModel
+
+@{
+    ViewData["Title"] = "Add or Edit Questions";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<div class="container mt-5">
+    <h3 class="mb-4 text-center fw-bold text-primary">Add or Edit Questions</h3>
+
+    <button class="btn btn-primary mb-3" onclick="openQuestionModal()">
+        <i class="bi bi-plus-circle"></i> Add New Question
+    </button>
+<div class="form-group mb-3">
+    <label asp-for="Duration" class="form-label">Quiz Duration (minutes)</label>
+    <input asp-for="Duration" class="form-control" type="number" min="1" />
+    <span asp-validation-for="Duration" class="text-danger"></span>
+</div>
+
+    <!-- Direct Form (optional if modal is used instead) -->
+    <form asp-action="SaveQuestion" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label asp-for="Question.SubjectId" class="form-label">Select Subject</label>
+            <select asp-for="Question.SubjectId" asp-items="Model.Subjects" class="form-select" required></select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Question Text</label>
+            <div class="position-relative">
+                <div class="d-flex justify-content-end mb-1">
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-1" onclick="triggerSymbolMenu()">
+                        <i class="bi bi-symbol"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('questionImage').click()">
+                        <i class="bi bi-image"></i>
+                    </button>
+                </div>
+                <textarea asp-for="Question.Text" class="form-control" rows="4" required></textarea>
+                <input type="file" id="questionImage" name="ImageFile" accept="image/*" class="form-control d-none" />
+            </div>
+        </div>
+
+        <div id="symbolMenu" class="card p-2 mb-3 d-none">
+            <div><strong>Common Math Symbols:</strong></div>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                @{
+                    string[] symbols = {
+                        "+", "-", "×", "÷", "=", "≠", "√", "π", "∞", "Δ",
+                        "sin", "cos", "tan", "α", "β", "γ", "≤", "≥", "∑", "∫",
+                        "∂", "²", "³", "ⁿ", "√{}", "^{}", "frac{}{}", "sqrt{}", "log", "ln",
+                        "∧", "∨", "∀", "∃", "⇒", "⇔", "matrix{{}}", "|x|", "∈", "∪", "∩"
+                    };
+                    foreach (var symbol in symbols)
+                    {
+                        <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('@symbol')">@Html.Raw(symbol)</button>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="Question.OptionA" class="form-label">Option A</label>
+                <input asp-for="Question.OptionA" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Question.OptionB" class="form-label">Option B</label>
+                <input asp-for="Question.OptionB" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="Question.OptionC" class="form-label">Option C</label>
+                <input asp-for="Question.OptionC" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Question.OptionD" class="form-label">Option D</label>
+                <input asp-for="Question.OptionD" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="Question.Answer" class="form-label">Correct Answer</label>
+                <select asp-for="Question.Answer" class="form-select" required>
+                    <option value="">-- Select Answer --</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Question.Mark" class="form-label">Mark</label>
+                <input asp-for="Question.Mark" type="number" step="0.5" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label asp-for="Question.Difficulty" class="form-label">Difficulty</label>
+                <select asp-for="Question.Difficulty" class="form-select" required>
+                    <option value="">-- Select Difficulty --</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Question.Topic" class="form-label">Topic</label>
+                <input asp-for="Question.Topic" class="form-control" placeholder="e.g., Algebra, Electricity" required />
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Save Question
+            </button>
+            <a asp-action="QuestionList" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Modal (outside form) -->
+<div class="modal fade" id="questionModal" tabindex="-1" aria-labelledby="questionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="questionForm" enctype="multipart/form-data" method="post" asp-action="SaveQuestion">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="questionModalLabel">Add / Edit Question</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="Question.Topic" />
+
+                    <div class="mb-3">
+                        <label asp-for="Question.SubjectId" class="form-label">Subject</label>
+                        <select asp-for="Question.SubjectId" asp-items="Model.Subjects" class="form-select" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Question.Text" class="form-label">Question Text</label>
+                        <textarea asp-for="Question.Text" id="questionText" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Upload Image (optional)</label>
+                        <input type="file" id="questionImageModal" name="ImageFile" accept="image/*" class="form-control" />
+                        <img id="imagePreview" src="#" alt="Image Preview" class="img-fluid mt-2 d-none" style="max-height:150px;" />
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Question.OptionA" class="form-label">Option A</label>
+                            <input asp-for="Question.OptionA" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Question.OptionB" class="form-label">Option B</label>
+                            <input asp-for="Question.OptionB" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Question.OptionC" class="form-label">Option C</label>
+                            <input asp-for="Question.OptionC" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Question.OptionD" class="form-label">Option D</label>
+                            <input asp-for="Question.OptionD" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Question.Answer" class="form-label">Correct Answer</label>
+                        <select asp-for="Question.Answer" class="form-select" required>
+                            <option value="">-- Select Correct Answer --</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Insert Math Symbols</label>
+                        <div class="btn-group flex-wrap" role="group">
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('+')">+</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('\\sqrt{}')">√</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('^{}')">^</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('\\frac{}{}')">½</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('\\pi')">π</button>
+                            <button type="button" class="btn btn-light btn-sm" onclick="insertSymbol('\\alpha')">α</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Question.Mark" class="form-label">Mark</label>
+                        <input asp-for="Question.Mark" type="number" step="0.5" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Question.Difficulty" class="form-label">Difficulty</label>
+                        <select asp-for="Question.Difficulty" class="form-select" required>
+                            <option value="">-- Select Difficulty --</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Question.Topic" class="form-label">Topic</label>
+                        <input asp-for="Question.Topic" class="form-control" />
+                    </div>
+
+                    <hr />
+                    <h6>Math Preview:</h6>
+                    <div id="mathPreview" class="border p-3" style="min-height:80px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Question</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function insertSymbol(symbol) {
+            const textarea = document.querySelector("textarea[name='Text']");
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.slice(0, start) + symbol + text.slice(end);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = start + symbol.length;
+        }
+
+        function triggerSymbolMenu() {
+            document.getElementById('symbolMenu').classList.toggle('d-none');
+        }
+
+        function openQuestionModal(question) {
+            document.getElementById('questionForm').reset();
+            document.getElementById('imagePreview').classList.add('d-none');
+            document.getElementById('mathPreview').innerHTML = '';
+            new bootstrap.Modal(document.getElementById('questionModal')).show();
+        }
+
+        document.getElementById('questionImageModal')?.addEventListener('change', function (e) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    </script>
+}

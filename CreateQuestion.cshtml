@@ -1,0 +1,50 @@
+@model FESVIC.ViewModels.QuestionViewModel
+
+@{
+    ViewData["Title"] = "Create Question";
+}
+
+<h2>Create Question</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Question.Text"></label>
+        <input asp-for="Question.Text" class="form-control" />
+        <span asp-validation-for="Question.Text" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Question.SubjectId">Subject</label>
+        <select asp-for="Question.SubjectId" asp-items="Model.Subjects" class="form-control">
+            <option value="">-- Select Subject --</option>
+        </select>
+        <span asp-validation-for="Question.SubjectId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Question.OptionA">Option A</label>
+        <input asp-for="Question.OptionA" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Question.OptionB">Option B</label>
+        <input asp-for="Question.OptionB" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Question.OptionC">Option C</label>
+        <input asp-for="Question.OptionC" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Question.OptionD">Option D</label>
+        <input asp-for="Question.OptionD" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Question.CorrectOption">Correct Option</label>
+        <input asp-for="Question.CorrectOption" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Create</button>
+</form>

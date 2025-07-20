@@ -1,0 +1,125 @@
+﻿/* Core Styles */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom right, #0e1d34, #1b1b2f);
+    color: #fff;
+    margin: 0;
+    padding-bottom: 80px;
+}
+
+/* Navigation */
+.navbar {
+    background-color: #7b113a; /* wine */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar a.nav-link {
+    color: #ffb347 !important; /* orange */
+}
+
+.navbar a.nav-link:hover,
+.navbar a.nav-link.active {
+    background-color: #1b6ec2; /* blue */
+    color: #fff !important;
+    border-radius: 0.25rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+    color: #fff;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #ffb347; /* orange */
+    border-color: #ff9933;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #7b113a;
+    border-color: #5c0a28;
+}
+
+.btn-danger:hover {
+    background-color: #990033;
+    border-color: #660022;
+}
+
+/* Cards / Panels */
+.card {
+    background-color: rgba(8, 219, 167, 0.95);
+    color: #333;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Links */
+a {
+    color: #1b6ec2;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #ff7f50;
+}
+
+/* Footer */
+.footer {
+    background-color: #1b1b2f;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Custom Elements */
+.section-title {
+    font-size: 2rem;
+    color: #ffb347; /* orange */
+    font-weight: bold;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Input Styling */
+input.form-control, textarea.form-control, select.form-control {
+    border-radius: 8px;
+    border: 2px solid #1b6ec2;
+    padding: 0.75rem;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #ff9933;
+    box-shadow: 0 0 8px rgba(255, 153, 51, 0.5);
+    outline: none;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+}

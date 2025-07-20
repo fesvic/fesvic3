@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Set Quiz Timer";
+    var subjects = ViewBag.Subjects as List<FESVIC.Models.Subject>;
+}
+
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="mb-4 text-center text-primary">Set Quiz Duration</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <form method="post" asp-action="SetQuizTimer">
+        <div class="mb-3">
+            <label for="subjectId" class="form-label">Select Subject</label>
+            <select name="subjectId" class="form-select" required>
+                <option disabled selected value="">-- Select Subject --</option>
+                @foreach (var subject in subjects)
+                {
+                    <option value="@subject.Id">@subject.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="duration" class="form-label">Duration (in minutes)</label>
+            <input type="number" name="duration" class="form-control" min="1" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Save Duration</button>
+    </form>
+</div>
